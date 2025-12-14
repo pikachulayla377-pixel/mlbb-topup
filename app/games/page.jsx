@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FiFilter, FiX } from "react-icons/fi";
+import { FiFilter, FiX, FiSearch, FiGrid, FiList } from 'react-icons/fi';
+
 import logo from "@/public/logo.png";
 
 export default function GamesPage() {
@@ -12,8 +13,10 @@ export default function GamesPage() {
 
   /* ================= FILTER STATE ================= */
   const [showFilter, setShowFilter] = useState(false);
-  const [sort, setSort] = useState("az"); // az | za
+  const [sort, setSort] = useState("az");
   const [hideOOS, setHideOOS] = useState(false);
+  const [viewMode, setViewMode] = useState("grid");
+  const [searchQuery, setSearchQuery] = useState("");
 
   /* ================= CONFIG ================= */
   const SPECIAL_MLBB_GAME = "MLBB SMALL/PHP";
@@ -42,26 +45,29 @@ export default function GamesPage() {
     (sort !== "az" ? 1 : 0) +
     (hideOOS ? 1 : 0);
 
-  /* ================= FILTER + SORT ================= */
+  /* ================= FILTER + SORT + SEARCH ================= */
   const processGames = (list) => {
     let filtered = [...list];
 
-    if (hideOOS) {
-      filtered = filtered.filter(
-        (g) => !isOutOfStock(g.gameName)
+    // Search filter
+    if (searchQuery.trim()) {
+      filtered = filtered.filter((g) =>
+        g.gameName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
+    // Out of stock filter
+    if (hideOOS) {
+      filtered = filtered.filter((g) => !isOutOfStock(g.gameName));
+    }
+
+    // Sorting
     if (sort === "az") {
-      filtered.sort((a, b) =>
-        a.gameName.localeCompare(b.gameName)
-      );
+      filtered.sort((a, b) => a.gameName.localeCompare(b.gameName));
     }
 
     if (sort === "za") {
-      filtered.sort((a, b) =>
-        b.gameName.localeCompare(a.gameName)
-      );
+      filtered.sort((a, b) => b.gameName.localeCompare(a.gameName));
     }
 
     return filtered;
@@ -69,17 +75,11 @@ export default function GamesPage() {
 
   /* ================= PIN MLBB GAME ================= */
   const injectSpecialGame = (cat) => {
-    if (
-      !cat.categoryTitle
-        ?.toLowerCase()
-        .includes("mobile legends")
-    ) {
+    if (!cat.categoryTitle?.toLowerCase().includes("mobile legends")) {
       return cat.gameId;
     }
 
-    const specialGame = games.find(
-      (g) => g.gameName === SPECIAL_MLBB_GAME
-    );
+    const specialGame = games.find((g) => g.gameName === SPECIAL_MLBB_GAME);
 
     if (!specialGame) return cat.gameId;
 
@@ -90,22 +90,22 @@ export default function GamesPage() {
     return [specialGame, ...withoutDuplicate];
   };
 
-  /* ================= GAME CARD ================= */
-  const GameCard = ({ game }) => {
+  /* ================= GAME CARD - GRID VIEW ================= */
+  const GameCardGrid = ({ game }) => {
     const disabled = isOutOfStock(game.gameName);
 
     return (
       <Link
         href={disabled ? "#" : `/games/${game.gameSlug}`}
-        className={`group relative overflow-hidden rounded-2xl border 
+        className={`group relative overflow-hidden rounded-2xl border
         bg-[var(--card)] backdrop-blur transition-all duration-300
         ${
           disabled
-            ? "opacity-40 pointer-events-none"
-            : "hover:-translate-y-1 hover:shadow-xl hover:border-[var(--accent)]"
+            ? "opacity-40 pointer-events-none border-[var(--border)]"
+            : "hover:-translate-y-1 hover:shadow-xl hover:border-[var(--accent)] border-[var(--border)]"
         }`}
       >
-        <div className="relative h-32 w-full overflow-hidden">
+        <div className="relative h-40 w-full overflow-hidden">
           <Image
             src={game.gameImageId?.image || logo}
             alt={game.gameName}
@@ -113,11 +113,11 @@ export default function GamesPage() {
             className={`object-cover transition-transform duration-300
             ${disabled ? "grayscale" : "group-hover:scale-110"}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
 
-        <div className="p-3 space-y-1">
-          <h3 className="text-sm font-semibold truncate">
+        <div className="p-4 space-y-2">
+          <h3 className="text-sm font-semibold truncate group-hover:text-[var(--accent)] transition-colors">
             {game.gameName}
           </h3>
           <p className="text-xs text-[var(--muted)]">
@@ -126,7 +126,7 @@ export default function GamesPage() {
 
           {!disabled && game.tagId && (
             <span
-              className="inline-block mt-2 text-[10px] px-2 py-0.5 rounded-full"
+              className="inline-block text-[10px] px-2 py-1 rounded-full font-medium"
               style={{
                 background: game.tagId.tagBackground,
                 color: game.tagId.tagColor,
@@ -138,7 +138,64 @@ export default function GamesPage() {
         </div>
 
         {disabled && (
-          <span className="absolute top-3 right-3 text-[10px] px-2 py-1 rounded-full bg-red-600 text-white">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+            <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold">
+              Out of Stock
+            </span>
+          </div>
+        )}
+      </Link>
+    );
+  };
+
+  /* ================= GAME CARD - LIST VIEW ================= */
+  const GameCardList = ({ game }) => {
+    const disabled = isOutOfStock(game.gameName);
+
+    return (
+      <Link
+        href={disabled ? "#" : `/games/${game.gameSlug}`}
+        className={`group flex items-center gap-4 p-4 rounded-2xl border
+        bg-[var(--card)] backdrop-blur transition-all duration-300
+        ${
+          disabled
+            ? "opacity-40 pointer-events-none border-[var(--border)]"
+            : "hover:shadow-lg hover:border-[var(--accent)] border-[var(--border)]"
+        }`}
+      >
+        <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+          <Image
+            src={game.gameImageId?.image || logo}
+            alt={game.gameName}
+            fill
+            className={`object-cover transition-transform duration-300
+            ${disabled ? "grayscale" : "group-hover:scale-110"}`}
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-semibold truncate mb-1 group-hover:text-[var(--accent)] transition-colors">
+            {game.gameName}
+          </h3>
+          <p className="text-sm text-[var(--muted)] mb-2">
+            {game.gameFrom}
+          </p>
+
+          {!disabled && game.tagId && (
+            <span
+              className="inline-block text-xs px-3 py-1 rounded-full font-medium"
+              style={{
+                background: game.tagId.tagBackground,
+                color: game.tagId.tagColor,
+              }}
+            >
+              {game.tagId.tagName}
+            </span>
+          )}
+        </div>
+
+        {disabled && (
+          <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold flex-shrink-0">
             Out of Stock
           </span>
         )}
@@ -148,39 +205,89 @@ export default function GamesPage() {
 
   return (
     <section className="min-h-screen px-4 py-10 bg-[var(--background)] text-[var(--foreground)]">
-
+      
       {/* ================= TOP BAR ================= */}
-      <div className="max-w-7xl mx-auto flex justify-end items-center gap-3 mb-4 relative z-40">
+      <div className="max-w-7xl mx-auto mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+          
+          {/* Search Bar */}
+          <div className="relative flex-1 w-full sm:max-w-md">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+            <input
+              type="text"
+              placeholder="Search games..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-[var(--card)] border border-[var(--border)]
+                         text-[var(--foreground)] placeholder-[var(--muted)] outline-none
+                         focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20
+                         transition-all duration-300"
+            />
+          </div>
 
-        {activeFilterCount > 0 && (
-          <button
-            onClick={() => {
-              setSort("az");
-              setHideOOS(false);
-            }}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl border
-            bg-[var(--card)] text-sm hover:border-red-500 hover:text-red-500"
-          >
-            <FiX />
-            Clear
-          </button>
-        )}
+          {/* Right Controls */}
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            
+            {/* View Toggle */}
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === "grid" 
+                    ? "bg-[var(--accent)] text-white" 
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                <FiGrid />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-lg transition-all ${
+                  viewMode === "list" 
+                    ? "bg-[var(--accent)] text-white" 
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                <FiList />
+              </button>
+            </div>
 
-        <button
-          onClick={() => setShowFilter(true)}
-          className="relative flex items-center gap-2 px-4 py-2 rounded-xl border
-          bg-[var(--card)] hover:border-[var(--accent)]"
-        >
-          <FiFilter />
-          Filter
-          {activeFilterCount > 0 && (
-            <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px]
-            flex items-center justify-center text-[10px]
-            rounded-full bg-[var(--accent)] text-black font-bold">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
+            {/* Clear Filters */}
+            {activeFilterCount > 0 && (
+              <button
+                onClick={() => {
+                  setSort("az");
+                  setHideOOS(false);
+                }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/50
+                           bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:border-red-500
+                           transition-all duration-300 backdrop-blur-sm group"
+              >
+                <FiX className="group-hover:rotate-90 transition-transform duration-300" />
+                <span className="hidden sm:inline">Clear</span>
+              </button>
+            )}
+
+            {/* Filter Button */}
+            <button
+              onClick={() => setShowFilter(true)}
+              className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)]
+                         bg-[var(--card)] hover:border-[var(--accent)] hover:bg-[var(--accent)]/10
+                         transition-all duration-300 backdrop-blur-sm group"
+            >
+              <FiFilter className="group-hover:rotate-12 transition-transform duration-300" />
+              <span className="hidden sm:inline">Filter</span>
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-2 -right-2 min-w-[20px] h-[20px]
+                               flex items-center justify-center text-xs
+                               rounded-full bg-[var(--accent)] text-white font-bold
+                               shadow-lg shadow-[var(--accent)]/50 animate-pulse">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ================= CATEGORY LIST ================= */}
@@ -191,80 +298,136 @@ export default function GamesPage() {
 
         return (
           <div key={i} className="max-w-7xl mx-auto mb-12">
-            <h2 className="text-xl font-bold mb-4 px-1">
-              {cat.categoryTitle}
-            </h2>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-              {filtered.map((game, index) => (
-                <GameCard key={index} game={game} />
-              ))}
+            <div className="flex items-center gap-3 mb-6">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
+                {cat.categoryTitle}
+              </h2>
+              <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
             </div>
+
+            {viewMode === "grid" ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+                {filtered.map((game, index) => (
+                  <GameCardGrid key={index} game={game} />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filtered.map((game, index) => (
+                  <GameCardList key={index} game={game} />
+                ))}
+              </div>
+            )}
           </div>
         );
       })}
 
       {/* ================= ALL GAMES ================= */}
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-xl font-bold mb-4 px-1">
-          All Games
-        </h2>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-          {processGames(games).map((game, i) => (
-            <GameCard key={i} game={game} />
-          ))}
+        <div className="flex items-center gap-3 mb-6">
+          <h2 className="text-2xl font-bold text-[var(--foreground)]">
+            All Games
+          </h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
+          <span className="text-sm text-[var(--muted)]">
+            {processGames(games).length} games
+          </span>
         </div>
+
+        {viewMode === "grid" ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            {processGames(games).map((game, i) => (
+              <GameCardGrid key={i} game={game} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {processGames(games).map((game, i) => (
+              <GameCardList key={i} game={game} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ================= FILTER MODAL ================= */}
       {showFilter && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center"
           onClick={() => setShowFilter(false)}
         >
           <div
-            className="bg-[var(--card)] w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-5"
+            className="bg-[var(--card)] w-full sm:max-w-md 
+                       rounded-t-3xl sm:rounded-3xl p-6 border border-[var(--border)]
+                       shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-semibold mb-4">
-              Filter & Sort
-            </h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
+                Filter & Sort
+              </h3>
+              <button 
+                onClick={() => setShowFilter(false)}
+                className="p-2 rounded-lg hover:bg-[var(--border)]/50 transition-colors"
+              >
+                <FiX className="text-[var(--muted)]" />
+              </button>
+            </div>
 
-            <div className="mb-4">
-              <p className="text-sm font-medium mb-2">Sort By</p>
-              <div className="flex gap-2">
+            {/* Sort Section */}
+            <div className="mb-6">
+              <p className="text-sm font-semibold mb-3 text-[var(--foreground)]">Sort By</p>
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setSort("az")}
-                  className={`flex-1 py-2 rounded-xl border ${
-                    sort === "az" ? "border-[var(--accent)]" : ""
+                  className={`py-3 rounded-xl border transition-all duration-300 font-medium ${
+                    sort === "az" 
+                      ? "border-[var(--accent)] bg-[var(--accent)]/20 text-[var(--accent)]" 
+                      : "border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)]/50"
                   }`}
                 >
-                  A – Z
+                  A → Z
                 </button>
                 <button
                   onClick={() => setSort("za")}
-                  className={`flex-1 py-2 rounded-xl border ${
-                    sort === "za" ? "border-[var(--accent)]" : ""
+                  className={`py-3 rounded-xl border transition-all duration-300 font-medium ${
+                    sort === "za" 
+                      ? "border-[var(--accent)] bg-[var(--accent)]/20 text-[var(--accent)]" 
+                      : "border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--accent)]/50"
                   }`}
                 >
-                  Z – A
+                  Z → A
                 </button>
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm mb-6">
-              <input
-                type="checkbox"
-                checked={hideOOS}
-                onChange={(e) => setHideOOS(e.target.checked)}
-              />
-              Hide Out-of-Stock
-            </label>
+            {/* Options Section */}
+            <div className="mb-6 p-4 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={hideOOS}
+                    onChange={(e) => setHideOOS(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-[var(--border)] rounded-full peer-checked:bg-[var(--accent)] 
+                                  transition-all duration-300 shadow-inner"></div>
+                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full 
+                                  peer-checked:translate-x-5 transition-transform duration-300 
+                                  shadow-lg"></div>
+                </div>
+                <span className="text-sm font-medium text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors">
+                  Hide Out-of-Stock Items
+                </span>
+              </label>
+            </div>
 
+            {/* Apply Button */}
             <button
               onClick={() => setShowFilter(false)}
-              className="w-full py-3 rounded-xl bg-[var(--accent)] text-black font-semibold"
+              className="w-full py-3.5 rounded-xl bg-[var(--accent)] text-white font-bold
+                         hover:opacity-90 transition-all duration-300 shadow-lg 
+                         hover:shadow-xl hover:-translate-y-0.5"
             >
               Apply Filters
             </button>
