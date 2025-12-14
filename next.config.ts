@@ -1,0 +1,30 @@
+import type { NextConfig } from "next";
+
+const nextConfig = {
+  images: {
+    
+  remotePatterns: [
+    { protocol: "https", hostname: "res.cloudinary.com" },
+    { protocol: "https", hostname: "images.unsplash.com" },
+    { protocol: "https", hostname: "i.pinimg.com" },
+      {
+        protocol: "https",
+        hostname: "busan-public.s3.ap-south-1.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "1gamestopup.com", // optional if images come from here later
+      }
+  ],
+
+
+  },
+
+   experimental: {
+    serverActions: {
+      bodySizeLimit: '100mb', // increase global body size limit
+    },
+  },
+};
+
+export default nextConfig;
