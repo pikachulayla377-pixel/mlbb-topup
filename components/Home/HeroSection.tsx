@@ -34,7 +34,7 @@ export default function HeroSection() {
       <ScrollingNoticeBand/>
     {/* <HomeSection/> */}
     <div className="p-4 m-2">
-        <MLBBPurchaseGuide/>
+        {/* <MLBBPurchaseGuide/> */}
     </div>
    
     <HomeServices/>

@@ -6,6 +6,7 @@ import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { FiPlus } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
 
+
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);

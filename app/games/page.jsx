@@ -91,117 +91,143 @@ export default function GamesPage() {
   };
 
   /* ================= GAME CARD - GRID VIEW ================= */
-  const GameCardGrid = ({ game }) => {
-    const disabled = isOutOfStock(game.gameName);
+const GameCardGrid = ({ game }) => {
+  const disabled = isOutOfStock(game.gameName);
 
-    return (
-      <Link
-        href={disabled ? "#" : `/games/${game.gameSlug}`}
-        className={`group relative overflow-hidden rounded-2xl border
-        bg-[var(--card)] backdrop-blur transition-all duration-300
-        ${
-          disabled
-            ? "opacity-40 pointer-events-none border-[var(--border)]"
-            : "hover:-translate-y-1 hover:shadow-xl hover:border-[var(--accent)] border-[var(--border)]"
-        }`}
-      >
-        <div className="relative h-40 w-full overflow-hidden">
-          <Image
-            src={game.gameImageId?.image || logo}
-            alt={game.gameName}
-            fill
-            className={`object-cover transition-transform duration-300
-            ${disabled ? "grayscale" : "group-hover:scale-110"}`}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        </div>
+  return (
+    <Link
+      href={disabled ? "#" : `/games/${game.gameSlug}`}
+      className={`group relative overflow-hidden rounded-2xl border
+      bg-[var(--card)] backdrop-blur transition-all duration-300
+      ${
+        disabled
+          ? "opacity-80 pointer-events-none border-[var(--border)]"
+          : "hover:-translate-y-1 hover:shadow-xl hover:border-[var(--accent)] border-[var(--border)]"
+      }`}
+    >
+      <div className="relative h-40 w-full overflow-hidden">
+        <Image
+          src={game.gameImageId?.image || logo}
+          alt={game.gameName}
+          fill
+          className={`object-cover transition-all duration-300
+          ${
+            disabled
+              ? "grayscale blur-[1.5px] scale-105"
+              : "group-hover:scale-110"
+          }`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      </div>
 
-        <div className="p-4 space-y-2">
-          <h3 className="text-sm font-semibold truncate group-hover:text-[var(--accent)] transition-colors">
-            {game.gameName}
-          </h3>
-          <p className="text-xs text-[var(--muted)]">
-            {game.gameFrom}
-          </p>
+      <div className="p-4 space-y-2">
+        <h3
+          className={`text-sm font-semibold truncate transition-colors
+          ${
+            disabled
+              ? "text-[var(--muted)]"
+              : "group-hover:text-[var(--accent)]"
+          }`}
+        >
+          {game.gameName}
+        </h3>
 
-          {!disabled && game.tagId && (
-            <span
-              className="inline-block text-[10px] px-2 py-1 rounded-full font-medium"
-              style={{
-                background: game.tagId.tagBackground,
-                color: game.tagId.tagColor,
-              }}
-            >
-              {game.tagId.tagName}
-            </span>
-          )}
-        </div>
+        <p className="text-xs text-[var(--muted)]">
+          {game.gameFrom}
+        </p>
 
-        {disabled && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold">
-              Out of Stock
-            </span>
-          </div>
-        )}
-      </Link>
-    );
-  };
-
-  /* ================= GAME CARD - LIST VIEW ================= */
-  const GameCardList = ({ game }) => {
-    const disabled = isOutOfStock(game.gameName);
-
-    return (
-      <Link
-        href={disabled ? "#" : `/games/${game.gameSlug}`}
-        className={`group flex items-center gap-4 p-4 rounded-2xl border
-        bg-[var(--card)] backdrop-blur transition-all duration-300
-        ${
-          disabled
-            ? "opacity-40 pointer-events-none border-[var(--border)]"
-            : "hover:shadow-lg hover:border-[var(--accent)] border-[var(--border)]"
-        }`}
-      >
-        <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-          <Image
-            src={game.gameImageId?.image || logo}
-            alt={game.gameName}
-            fill
-            className={`object-cover transition-transform duration-300
-            ${disabled ? "grayscale" : "group-hover:scale-110"}`}
-          />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold truncate mb-1 group-hover:text-[var(--accent)] transition-colors">
-            {game.gameName}
-          </h3>
-          <p className="text-sm text-[var(--muted)] mb-2">
-            {game.gameFrom}
-          </p>
-
-          {!disabled && game.tagId && (
-            <span
-              className="inline-block text-xs px-3 py-1 rounded-full font-medium"
-              style={{
-                background: game.tagId.tagBackground,
-                color: game.tagId.tagColor,
-              }}
-            >
-              {game.tagId.tagName}
-            </span>
-          )}
-        </div>
-
-        {disabled && (
-          <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold flex-shrink-0">
-            Out of Stock
+        {!disabled && game.tagId && (
+          <span
+            className="inline-block text-[10px] px-2 py-1 rounded-full font-medium"
+            style={{
+              background: game.tagId.tagBackground,
+              color: game.tagId.tagColor,
+            }}
+          >
+            {game.tagId.tagName}
           </span>
         )}
-      </Link>
-    );
-  };
+      </div>
+
+      {disabled && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
+          <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold">
+            Out of Stock
+          </span>
+        </div>
+      )}
+    </Link>
+  );
+};
+
+
+  /* ================= GAME CARD - LIST VIEW ================= */
+const GameCardList = ({ game }) => {
+  const disabled = isOutOfStock(game.gameName);
+
+  return (
+    <Link
+      href={disabled ? "#" : `/games/${game.gameSlug}`}
+      className={`group flex items-center gap-4 p-4 rounded-2xl border
+      bg-[var(--card)] backdrop-blur transition-all duration-300
+      ${
+        disabled
+          ? "opacity-80 pointer-events-none border-[var(--border)]"
+          : "hover:shadow-lg hover:border-[var(--accent)] border-[var(--border)]"
+      }`}
+    >
+      <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
+        <Image
+          src={game.gameImageId?.image || logo}
+          alt={game.gameName}
+          fill
+          className={`object-cover transition-all duration-300
+          ${
+            disabled
+              ? "grayscale blur-[1.5px] scale-105"
+              : "group-hover:scale-110"
+          }`}
+        />
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <h3
+          className={`text-base font-semibold truncate mb-1 transition-colors
+          ${
+            disabled
+              ? "text-[var(--muted)]"
+              : "group-hover:text-[var(--accent)]"
+          }`}
+        >
+          {game.gameName}
+        </h3>
+
+        <p className="text-sm text-[var(--muted)] mb-2">
+          {game.gameFrom}
+        </p>
+
+        {!disabled && game.tagId && (
+          <span
+            className="inline-block text-xs px-3 py-1 rounded-full font-medium"
+            style={{
+              background: game.tagId.tagBackground,
+              color: game.tagId.tagColor,
+            }}
+          >
+            {game.tagId.tagName}
+          </span>
+        )}
+      </div>
+
+      {disabled && (
+        <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold flex-shrink-0">
+          Out of Stock
+        </span>
+      )}
+    </Link>
+  );
+};
+
 
   return (
     <section className="min-h-screen px-4 py-10 bg-[var(--background)] text-[var(--foreground)]">
