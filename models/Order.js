@@ -20,6 +20,12 @@ const OrderSchema = new mongoose.Schema(
       ],
       default: "pending"
     },
+     // ✅ NEW: Top-up status
+    topup: {
+      type: String,
+      enum: ["pending", "success", "failed"],
+      default: "pending",
+    },
     expiresAt: Date,
   },
   { timestamps: true }
