@@ -52,35 +52,51 @@ export async function GET(req, context) {
       pricingConfig = await PricingConfig.findOne({ userType }).lean();
     }
 
-    /* ================= APPLY DYNAMIC MARKUP ================= */
+    const gameSlug = data.data.gameSlug;
+
+    /* ================= APPLY PRICING ================= */
     data.data.itemId = data.data.itemId.map((item) => {
       const basePrice = Number(item.sellingPrice);
-      let markupPercent = 0;
+      let finalPrice = basePrice;
 
-      if (pricingConfig?.slabs?.length) {
-        const slab = pricingConfig.slabs.find(
-          (s) => basePrice >= s.min && basePrice < s.max
-        );
+      /* ---------- FIXED PRICE OVERRIDE ---------- */
+      const fixedOverride = pricingConfig?.overrides?.find(
+        (o) =>
+          o.gameSlug === gameSlug &&
+          o.itemSlug === item.itemSlug
+      );
 
-        if (slab) {
-          markupPercent = slab.percent;
+      if (fixedOverride?.fixedPrice != null) {
+        // ✅ Fixed price → NO slab logic
+        finalPrice = Number(fixedOverride.fixedPrice);
+      } else {
+        /* ---------- EXISTING SLAB LOGIC ---------- */
+        let markupPercent = 0;
+
+        if (pricingConfig?.slabs?.length) {
+          const slab = pricingConfig.slabs.find(
+            (s) => basePrice >= s.min && basePrice < s.max
+          );
+
+          if (slab) {
+            markupPercent = slab.percent;
+          }
         }
+
+        finalPrice =
+          markupPercent === 0
+            ? basePrice
+            : basePrice * (1 + markupPercent / 100);
       }
-
-const finalPrice =
-  markupPercent === 0
-    ? Number(basePrice.toFixed(2))
-    : Number((basePrice * (1 + markupPercent / 100)).toFixed(2));
-
 
       return {
         ...item,
-        sellingPrice: finalPrice,
+        sellingPrice: Number(finalPrice.toFixed(2)),
 
         // optional debug (remove in prod)
         _pricing: {
           basePrice,
-          markupPercent,
+          appliedFixedPrice: fixedOverride?.fixedPrice ?? null,
           userType,
         },
       };

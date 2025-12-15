@@ -25,7 +25,7 @@ const requireAdminOrOwner = (req) => {
 };
 
 /* =================================================
-   GET → Fetch pricing (used by fetchPricing)
+   GET → Fetch pricing (slabs + overrides)
    ================================================= */
 export async function GET(req) {
   try {
@@ -53,7 +53,10 @@ export async function GET(req) {
 
     return NextResponse.json({
       success: true,
-      data: pricing || null,
+      data: {
+        slabs: pricing?.slabs || [],
+        overrides: pricing?.overrides || [],
+      },
     });
   } catch (err) {
     console.error("GET pricing error:", err);
@@ -65,7 +68,7 @@ export async function GET(req) {
 }
 
 /* =================================================
-   PATCH → Save pricing (used by savePricing)
+   PATCH → Save pricing (slabs + overrides)
    ================================================= */
 export async function PATCH(req) {
   try {
@@ -79,16 +82,16 @@ export async function PATCH(req) {
       );
     }
 
-    const { userType, slabs } = await req.json();
+    const { userType, slabs = [], overrides = [] } = await req.json();
 
-    if (!userType || !Array.isArray(slabs)) {
+    if (!userType) {
       return NextResponse.json(
-        { success: false, message: "Invalid payload" },
+        { success: false, message: "userType is required" },
         { status: 400 }
       );
     }
 
-    // Basic validation (safety)
+    /* ================= VALIDATE SLABS ================= */
     for (const s of slabs) {
       if (
         typeof s.min !== "number" ||
@@ -102,9 +105,29 @@ export async function PATCH(req) {
       }
     }
 
+    /* ================= VALIDATE OVERRIDES ================= */
+    for (const o of overrides) {
+      if (
+        !o.gameSlug ||
+        !o.itemSlug ||
+        typeof o.fixedPrice !== "number" ||
+        o.fixedPrice < 0
+      ) {
+        return NextResponse.json(
+          { success: false, message: "Invalid override format" },
+          { status: 400 }
+        );
+      }
+    }
+
     const updated = await PricingConfig.findOneAndUpdate(
       { userType },
-      { slabs },
+      {
+        $set: {
+          slabs,
+          overrides,
+        },
+      },
       { upsert: true, new: true }
     );
 

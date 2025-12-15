@@ -19,7 +19,13 @@ export default function AdminPanalPage() {
 
   /* ================= PRICING STATE ================= */
   const [pricingType, setPricingType] = useState("admin");
-  const [slabs, setSlabs] = useState([{ min: 0, max: 100, percent: 0 }]);
+
+  const [slabs, setSlabs] = useState([
+    { min: 0, max: 100, percent: 0 },
+  ]);
+
+  const [overrides, setOverrides] = useState([]); // ✅ FIXED ITEM PRICES
+
   const [savingPricing, setSavingPricing] = useState(false);
 
   /* ================= HELPERS ================= */
@@ -103,10 +109,13 @@ export default function AdminPanalPage() {
 
     const data = await res.json();
 
-    if (data.success && data.data?.slabs) {
-      setSlabs(data.data.slabs);
-    } else {
-      setSlabs([{ min: 0, max: 0, percent: 0 }]);
+    if (data.success) {
+      setSlabs(
+        data.data?.slabs?.length
+          ? data.data.slabs
+          : [{ min: 0, max: 0, percent: 0 }]
+      );
+      setOverrides(data.data?.overrides || []);
     }
   };
 
@@ -125,6 +134,7 @@ export default function AdminPanalPage() {
         body: JSON.stringify({
           userType: pricingType,
           slabs: normalizeSlabs(slabs),
+          overrides, // ✅ SEND FIXED ITEM PRICES
         }),
       });
 
@@ -173,37 +183,24 @@ export default function AdminPanalPage() {
           </div>
 
           {/* TABS */}
-   <div
-  className="
-    mb-6
-    grid grid-cols-2 gap-3
-    sm:flex sm:flex-wrap sm:gap-4
-  "
->
-  {["users", "orders", "transactions", "pricing"].map((tab) => (
-    <button
-      key={tab}
-      onClick={() => setActiveTab(tab)}
-      className={`
-        px-4 py-2
-        rounded-xl font-semibold border text-sm
-        transition
-        ${
-          activeTab === tab
-            ? "bg-[var(--accent)] text-black"
-            : "bg-[var(--card)] border-[var(--border)]"
-        }
-      `}
-    >
-      {tab.toUpperCase()}
-    </button>
-  ))}
-</div>
-
+          <div className="mb-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4">
+            {["users", "orders", "transactions", "pricing"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-xl font-semibold border text-sm transition ${
+                  activeTab === tab
+                    ? "bg-[var(--accent)] text-black"
+                    : "bg-[var(--card)] border-[var(--border)]"
+                }`}
+              >
+                {tab.toUpperCase()}
+              </button>
+            ))}
+          </div>
 
           {/* PANEL */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6">
-
             {activeTab === "users" && (
               <UsersTab
                 users={users}
@@ -212,9 +209,7 @@ export default function AdminPanalPage() {
               />
             )}
 
-            {activeTab === "orders" && (
-              <OrdersTab orders={orders} />
-            )}
+            {activeTab === "orders" && <OrdersTab orders={orders} />}
 
             {activeTab === "transactions" && (
               <TransactionsTab transactions={transactions} />
@@ -226,11 +221,12 @@ export default function AdminPanalPage() {
                 setPricingType={setPricingType}
                 slabs={slabs}
                 setSlabs={setSlabs}
+                overrides={overrides}
+                setOverrides={setOverrides}
                 savingPricing={savingPricing}
                 onSave={savePricing}
               />
             )}
-
           </div>
         </div>
       </section>
