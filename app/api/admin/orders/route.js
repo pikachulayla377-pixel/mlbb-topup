@@ -29,9 +29,12 @@ export async function GET(req) {
     await connectDB();
     verifyOwner(req);
 
-    const orders = await Order.find().sort({ createdAt: -1 }).lean();
+    const orders = await Order.find()
+      .sort({ createdAt: -1 })
+      .lean();
 
     return Response.json({ success: true, data: orders });
+
   } catch (err) {
     return Response.json(
       { success: false, message: err.message || "Server error" },
@@ -57,7 +60,6 @@ export async function PATCH(req) {
       );
     }
 
-    // Optional: restrict allowed statuses
     const allowedStatus = ["pending", "success", "failed", "cancelled"];
     if (!allowedStatus.includes(status)) {
       return Response.json(
@@ -66,9 +68,27 @@ export async function PATCH(req) {
       );
     }
 
+    /* =========================
+       BUILD UPDATE PAYLOAD
+    ========================= */
+    const update = {
+      status,
+      updatedAt: new Date(),
+    };
+
+    // 🔒 OWNER OVERRIDE LOGIC
+    if (status === "success") {
+      update.paymentStatus = "success";
+      update.topupStatus = "success";
+    }
+
+    if (status === "failed") {
+      update.topupStatus = "failed";
+    }
+
     const order = await Order.findOneAndUpdate(
       { orderId },
-      { status },
+      update,
       { new: true }
     );
 
@@ -84,6 +104,7 @@ export async function PATCH(req) {
       message: "Order status updated",
       data: order,
     });
+
   } catch (err) {
     return Response.json(
       { success: false, message: err.message || "Server error" },

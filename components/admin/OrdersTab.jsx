@@ -116,7 +116,9 @@ function OrderModal({ order, onClose, onUpdateStatus }) {
           <Detail label="Payment" value={order.paymentMethod} />
           <Detail label="Email" value={order.email} />
           <Detail label="Phone" value={order.phone} />
-          <Detail label="Topup Status" value={order.topup} />
+          <Detail label="Payment Status" value={order.paymentStatus} />
+
+          <Detail label="Topup Status" value={order.topupStatus} />
           <Detail label="Price" value={`₹${order.price}`} />
           <Detail
             label="Created"

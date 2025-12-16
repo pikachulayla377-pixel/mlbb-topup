@@ -4,14 +4,15 @@ import { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 
 type OrderType = {
+  orderId: string;
   gameSlug: string;
-  itemSlug: string;
   itemName: string;
   playerId: string;
   zoneId: string;
   paymentMethod: string;
   price: number;
   status: string;
+  topupStatus?: string;
   createdAt: string;
 };
 
@@ -21,6 +22,8 @@ interface OrderItemProps {
 
 export default function OrderItem({ order }: OrderItemProps) {
   const [open, setOpen] = useState(false);
+
+  const finalStatus = order.topupStatus || order.status;
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -33,6 +36,13 @@ export default function OrderItem({ order }: OrderItemProps) {
     }
   };
 
+  const getGameName = (slug: string) => {
+    if (slug.toLowerCase().includes("mlbb")) {
+      return "Mobile Legends";
+    }
+    return slug;
+  };
+
   return (
     <div
       onClick={() => setOpen(!open)}
@@ -41,19 +51,27 @@ export default function OrderItem({ order }: OrderItemProps) {
       {/* TOP SECTION */}
       <div className="flex justify-between items-center">
         <div>
-          <p className="text-xs text-[var(--muted)]">
+ 
+          <p className="font-mono text-sm font-semibold">
+            {order.orderId}
+          </p>
+
+          <p className="text-xs text-[var(--muted)] mt-2">
             {new Date(order.createdAt).toLocaleString()}
           </p>
-          <p className="text-xl font-semibold mt-1">₹{order.price}</p>
+
+          <p className="text-xl font-semibold mt-1">
+            ₹{order.price}
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
           <span
             className={`px-3 py-1 text-xs rounded-lg font-semibold ${getStatusStyle(
-              order.status
+              finalStatus
             )}`}
           >
-            {order.status.toUpperCase()}
+            {finalStatus.toUpperCase()}
           </span>
 
           <div
@@ -74,22 +92,24 @@ export default function OrderItem({ order }: OrderItemProps) {
       >
         <div className="pt-4 border-t border-[var(--border)] text-sm space-y-2">
           <p>
+            <strong>Game:</strong> {getGameName(order.gameSlug)}
+          </p>
+          <p>
             <strong>Player ID:</strong> {order.playerId}
           </p>
           <p>
             <strong>Zone ID:</strong> {order.zoneId}
           </p>
           <p>
-            <strong>Payment Method:</strong> {order.paymentMethod}
-          </p>
-          <p>
-            <strong>Game:</strong> {order.gameSlug}
+            <strong>Payment Method:</strong> {order.paymentMethod.toUpperCase()}
           </p>
 
           <div className="p-3 rounded-xl bg-[var(--background)]/40 border border-[var(--border)] mt-2">
-            <p className="text-[var(--muted)] text-sm mb-1">Item Details</p>
+            <p className="text-[var(--muted)] text-sm mb-1">
+              Item Details
+            </p>
             <p className="font-medium">
-              {order.itemSlug} — {order.itemName}
+              {order.itemName}
             </p>
           </div>
         </div>

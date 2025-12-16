@@ -22,7 +22,7 @@ export async function GET(req) {
 
     /* ================= FETCH SUCCESS TRANSACTIONS ================= */
     const transactions = await Order.find({
-      status: { $in: ["success", "completed", "paid"] }, // 👈 adjust if needed
+      paymentStatus: { $in: ["success", "completed", "paid"] }, // 👈 adjust if needed
     })
       .sort({ createdAt: -1 })
       .lean();
