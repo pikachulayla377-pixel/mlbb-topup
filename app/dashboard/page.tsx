@@ -9,6 +9,7 @@ import AccountTab from "../../components/Dashboard/AccountTab";
 import QueryTab from "../../components/Dashboard/QueryTab";
 
 type OrderType = {
+   orderId: string;
   gameSlug: string;
   itemSlug: string;
   itemName: string;
