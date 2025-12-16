@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     await connectDB();
 
     const { orderId } = await req.json();
+    console.log("Verifying Order ID:", orderId);
     if (!orderId) {
       return NextResponse.json({ success: false, message: "Missing orderId" });
     }
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
     // FETCH LOCAL ORDER
     // ----------------------------------
     let order = await Order.findOne({ orderId });
+    
     console.log("Local Order:", order);
 
     if (!order) {
@@ -59,6 +61,7 @@ export async function POST(req: Request) {
 
     if (!isSuccess) {
       order.status = "failed";
+       order.paymentStatus = "failed";
       await order.save();
 
       return NextResponse.json({
@@ -70,7 +73,9 @@ export async function POST(req: Request) {
     // ----------------------------------
     // PAYMENT SUCCESS
     // ----------------------------------
-    order.status = "success";
+    // order.status = "success";
+        order.paymentStatus = "success";
+
     order.gatewayResponse = data; // Store full raw API response
     await order.save();
 
@@ -81,9 +86,9 @@ export async function POST(req: Request) {
     const productId = data?.result?.remark2 || order.itemSlug; 
 
     const externalPayload = {
-      playerId: order.playerId,
-      zoneId: order.zoneId,
-      productId :order.gameSlug,             // ← product comes from remark2
+      playerId: String(order.playerId),     // ✅ force string
+  zoneId: String(order.zoneId),         // ✅ force string
+  productId: `${order?.gameSlug}_${order?.itemSlug}`, // 🔒 REQUIRED
       currency:  "USD",
     };
 
@@ -109,13 +114,20 @@ export async function POST(req: Request) {
     // ----------------------------------
     // SAVE GAME API RESPONSE
     // ----------------------------------
-    const isTopupSuccess =
-  gameResp.ok &&
-  (gameData?.success === true ||
-   gameData?.status === true ||
-   gameData?.result?.status === "SUCCESS");
+const topupSuccess =
+      gameResp.ok &&
+      (gameData?.success === true ||
+        gameData?.status === true ||
+        gameData?.result?.status === "SUCCESS");
 
     order.externalResponse = gameData;
+      if (topupSuccess) {
+      order.topupStatus = "success";
+      order.status = "success"; // ✅ FINAL SUCCESS
+    } else {
+      order.topupStatus = "failed";
+      order.status = "failed";
+    }
     await order.save();
 
     return NextResponse.json({
@@ -124,12 +136,13 @@ export async function POST(req: Request) {
       topupResponse: gameData,
     });
 
-    if (isTopupSuccess) {
-  order.topup = "success";   // ✅ TOPUP SUCCESS
-} else {
-  order.topup = "failed";    // ❌ TOPUP FAILED
-}
 
+    
+//     if (isTopupSuccess) {
+//   order.topup = "success";  
+// } else {
+//   order.topup = "failed";    
+// }
   } catch (error: any) {
     console.error("Verify error:", error);
     return NextResponse.json(

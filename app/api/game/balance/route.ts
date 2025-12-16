@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_BASE}/api-service/balance?currency=INR`;
+    const url = `${process.env.NEXT_PUBLIC_API_BASE}/api-service/balance?currency=USD`;
 
     const resp = await fetch(url, {
       method: "GET",

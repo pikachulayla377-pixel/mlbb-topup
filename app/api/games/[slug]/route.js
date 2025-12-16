@@ -55,52 +55,59 @@ export async function GET(req, context) {
     const gameSlug = data.data.gameSlug;
 
     /* ================= APPLY PRICING ================= */
-    data.data.itemId = data.data.itemId.map((item) => {
-      const basePrice = Number(item.sellingPrice);
-      let finalPrice = basePrice;
+   /* ================= APPLY PRICING ================= */
+data.data.itemId = data.data.itemId
+  // ❌ REMOVE ITEMS FOR MLBB SMALL/PHP
+  .filter((item) => {
+    if (data.data.gameName === "MLBB SMALL/PHP") {
+      const price = Number(item.sellingPrice);
 
-      /* ---------- FIXED PRICE OVERRIDE ---------- */
-      const fixedOverride = pricingConfig?.overrides?.find(
-        (o) =>
-          o.gameSlug === gameSlug &&
-          o.itemSlug === item.itemSlug
-      );
+      // remove weekly pass always
+      if (item.itemName === "Weekly Pass") return false;
 
-      if (fixedOverride?.fixedPrice != null) {
-        // ✅ Fixed price → NO slab logic
-        finalPrice = Number(fixedOverride.fixedPrice);
-      } else {
-        /* ---------- EXISTING SLAB LOGIC ---------- */
-        let markupPercent = 0;
+      // remove anything above 170
+      if (price > 170) return false;
+    }
+    return true;
+  })
+  .map((item) => {
 
-        if (pricingConfig?.slabs?.length) {
-          const slab = pricingConfig.slabs.find(
-            (s) => basePrice >= s.min && basePrice < s.max
-          );
 
-          if (slab) {
-            markupPercent = slab.percent;
-          }
-        }
+    /* ================= NORMAL PRICING ================= */
+    const basePrice = Number(item.sellingPrice);
+    let finalPrice = basePrice;
 
-        finalPrice =
-          markupPercent === 0
-            ? basePrice
-            : basePrice * (1 + markupPercent / 100);
+    const fixedOverride = pricingConfig?.overrides?.find(
+      (o) =>
+        o.gameSlug === gameSlug &&
+        o.itemSlug === item.itemSlug
+    );
+
+    if (fixedOverride?.fixedPrice != null) {
+      finalPrice = Number(fixedOverride.fixedPrice);
+    } else {
+      let markupPercent = 0;
+
+      if (pricingConfig?.slabs?.length) {
+        const slab = pricingConfig.slabs.find(
+          (s) => basePrice >= s.min && basePrice < s.max
+        );
+        if (slab) markupPercent = slab.percent;
       }
 
-      return {
-        ...item,
-        sellingPrice: Number(finalPrice.toFixed(2)),
+      finalPrice =
+        markupPercent === 0
+          ? basePrice
+          : basePrice * (1 + markupPercent / 100);
+    }
 
-        // optional debug (remove in prod)
-        _pricing: {
-          basePrice,
-          appliedFixedPrice: fixedOverride?.fixedPrice ?? null,
-          userType,
-        },
-      };
-    });
+    return {
+      ...item,
+      sellingPrice: Number(finalPrice.toFixed(2)),
+
+    };
+  });
+
 
     return NextResponse.json(data);
   } catch (error) {

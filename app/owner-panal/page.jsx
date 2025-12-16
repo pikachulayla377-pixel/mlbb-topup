@@ -151,6 +151,31 @@ export default function AdminPanalPage() {
     fetchBalance();
   }, []);
 
+
+  /* ================= UPDATE ORDER STATUS ================= */
+const updateOrderStatus = async (orderId, status) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch("/api/admin/orders", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ orderId, status }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.message || "Failed to update order");
+    return;
+  }
+
+  // Refresh orders after update
+  fetchOrders();
+};
+
   /* ================= TAB CHANGE ================= */
   useEffect(() => {
     if (activeTab === "users") fetchUsers();
@@ -209,7 +234,12 @@ export default function AdminPanalPage() {
               />
             )}
 
-            {activeTab === "orders" && <OrdersTab orders={orders} />}
+{activeTab === "orders" && (
+  <OrdersTab
+    orders={orders}
+    onUpdateStatus={updateOrderStatus}
+  />
+)}
 
             {activeTab === "transactions" && (
               <TransactionsTab transactions={transactions} />

@@ -53,8 +53,9 @@ export async function POST(req: Request) {
       email: email || null,
       phone: phone || null,
       currency,
-      status: "pending",  // lowercase standard
-      topup: "pending",
+  status: "pending",           // overall
+paymentStatus: "pending",    // payment not verified yet
+topupStatus: "pending",      // topup not started yet
 
       expiresAt,
     });
@@ -96,7 +97,6 @@ export async function POST(req: Request) {
     });
 
     const data = await resp.json();
-    console.log("XTRAGATEWAY CREATE ORDER RESPONSE:", data);
 
     // --------------------------
     // PAYMENT ORDER CREATION FAILED
