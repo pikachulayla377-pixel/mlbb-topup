@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./Snow.css";
+
 
 /* 🌍 Base Theme (Default Light) */
 :root {

@@ -150,6 +150,7 @@ export default function Header() {
                   >
                    Account Settings
                   </Link>
+
                     <Link
                     href="/dashboard"
                     className="block py-2 hover:text-[var(--accent)]"
@@ -164,6 +165,13 @@ export default function Header() {
                   >
                     Orders
                   </Link>
+                   {/* <Link
+                    href="/leaderboard"
+                    className="block py-2 hover:text-[var(--accent)]"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                   Leader Board
+                  </Link> */}
 
                   {/* ADMIN / OWNER */}
                   {( user.userType === "owner") && (

@@ -3,7 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import SocialFloat from "@/components/SocialFloat/SocialFloat";
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics } from '@next/third-parties/google';
+import ChristmasPopup from "@/components/Seasonal/ChristmasPopup";
 
 export const metadata: Metadata = {
   title: {
@@ -44,10 +45,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white">
+          <div className="snow" />
+
         <Header />
+                <ChristmasPopup />
+
         <main className="pt-20">{children}</main>
         <Footer/>
               <SocialFloat />
+              <div/>
 
       </body>
        <GoogleAnalytics gaId="G-XS42JM8W7L" />
