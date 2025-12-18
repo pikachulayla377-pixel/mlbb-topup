@@ -1,26 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 const themes = [
+  // 🌞 Core
   { id: "light", icon: "☀️", label: "Light" },
   { id: "dark", icon: "🌙", label: "Dark" },
+
+  // 🌸 Soft / Aesthetic
   { id: "sakura", icon: "🌸", label: "Sakura" },
-  { id: "violet", icon: "💜", label: "Violet" },
-  { id: "ember", icon: "🔥", label: "Ember" },
-  { id: "midnight", icon: "🌪️", label: "Midnight" },
   { id: "ocean", icon: "🌊", label: "Ocean" },
   { id: "forest", icon: "🍃", label: "Forest" },
-  { id: "crimson", icon: "🩸", label: "Crimson" },
-  { id: "galaxy", icon: "🌌", label: "Galaxy" },
-  { id: "sunset", icon: "🌅", label: "Sunset" },
-  { id: "ice", icon: "❄️", label: "Ice" },
-  { id: "monochrome", icon: "🎭", label: "Monochrome" },
   { id: "tropical", icon: "🌺", label: "Tropical" },
-  { id: "retro", icon: "👾", label: "Retro" },
-    { id: "cyber", icon: "💠", label: "Cyber" },
+  { id: "ice", icon: "❄️", label: "Ice" },
 
+  // 💜 Fantasy / Anime
+  { id: "violet", icon: "💜", label: "Violet" },
+  { id: "midnight", icon: "🌪️", label: "Midnight" },
+  { id: "galaxy", icon: "🌌", label: "Galaxy" },
+  { id: "plasma", icon: "🧬", label: "Plasma" },
+  { id: "crimson", icon: "🩸", label: "Crimson" },
+
+  // 🔥 Energy / Action
+  { id: "ember", icon: "🔥", label: "Ember" },
+  { id: "sunset", icon: "🌅", label: "Sunset" },
+  { id: "solar", icon: "🟡", label: "Solar Gold" },
+
+  // 👾 Tech / Retro
+  { id: "cyber", icon: "💠", label: "Cyber" },
+  { id: "neon-night", icon: "🟣", label: "Neon Night" },
+  { id: "retro", icon: "👾", label: "Retro" },
+  { id: "arctic", icon: "🧊", label: "Arctic" },
+
+  // 🎭 Minimal / Premium
+  { id: "monochrome", icon: "🎭", label: "Monochrome" },
+  { id: "aurora", icon: "🔵", label: "Aurora" },
+  { id: "coffee", icon: "☕", label: "Coffee" },
+  { id: "obsidian", icon: "🖤", label: "Obsidian" },
 ];
+
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<string>("dark");
