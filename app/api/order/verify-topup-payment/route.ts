@@ -11,6 +11,7 @@ export async function POST(req: Request) {
     if (!orderId) {
       return NextResponse.json({ success: false, message: "Missing orderId" });
     }
+    console.log("Local id:", orderId);
 
     // ----------------------------------
     // FETCH LOCAL ORDER
