@@ -85,7 +85,7 @@ export default function Dashboard() {
       body: JSON.stringify({
         page,
         limit,
-        search, // safe if empty
+        search,
       }),
     })
       .then((res) => res.json())
@@ -102,17 +102,61 @@ export default function Dashboard() {
   }, [search]);
 
   const tabCards = [
-    { key: "orders", label: "Total Orders", value: totalOrders },
-    { key: "wallet", label: "Wallet Balance", value: `₹${walletBalance}` },
+    { key: "orders", label: "Orders", value: totalOrders },
+    { key: "wallet", label: "Wallet", value: `₹${walletBalance}` },
     { key: "account", label: "Account", value: "Manage" },
-    { key: "query", label: "Queries", value: "Support" },
+    { key: "query", label: "Support", value: "Help" },
   ];
 
   return (
     <AuthGuard>
-      <section className="px-6 py-10 min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <section className="min-h-screen px-5 py-10 bg-[var(--background)] text-[var(--foreground)]">
 
-        {/* TOP CARDS */}
+        {/* ================= HERO HEADER ================= */}
+        <div className="max-w-5xl mx-auto mb-8 flex flex-col md:flex-row gap-5 md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Welcome back, {userDetails.name || "Player"} 👋
+            </h1>
+            <p className="text-sm text-[var(--muted)] mt-1">
+              Track orders, manage wallet & account
+            </p>
+          </div>
+
+          <button
+            onClick={() => (window.location.href = "/games")}
+            className="px-6 py-3 rounded-xl bg-gradient-to-r 
+                       from-[var(--accent)] to-purple-600
+                       text-white font-semibold shadow-lg
+                       hover:scale-[1.04] transition"
+          >
+            Buy Diamonds ⚡
+          </button>
+        </div>
+
+        {/* ================= WALLET BANNER ================= */}
+        {walletBalance > 0 && (
+          <div className="max-w-5xl mx-auto mb-8 p-5 rounded-2xl
+                          bg-gradient-to-r from-emerald-500/20 to-emerald-500/10
+                          border border-emerald-500/30">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-emerald-400">Wallet Balance</p>
+                <p className="text-2xl font-bold">₹{walletBalance}</p>
+              </div>
+
+              <button
+                onClick={() => setActiveTab("wallet")}
+                className="px-4 py-2 rounded-lg bg-emerald-500
+                           text-black font-semibold hover:scale-105 transition"
+              >
+                Use Wallet
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ================= DASHBOARD CARDS ================= */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-5xl mx-auto mb-10">
           {tabCards.map((tab) => (
             <DashboardCard
@@ -124,27 +168,54 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* CONTENT */}
-        <div className="max-w-4xl mx-auto bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-lg relative overflow-visible">
+        {/* ================= CONTENT PANEL ================= */}
+        <div className="max-w-4xl mx-auto bg-[var(--card)]
+                        border border-[var(--border)]
+                        rounded-2xl p-6 shadow-xl">
 
-          {/* ORDERS */}
+          {/* ================= ORDERS ================= */}
           {activeTab === "orders" && (
             <>
-              <h2 className="text-2xl font-semibold mb-4">Your Orders</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Your Orders</h2>
+                <span className="text-sm text-[var(--muted)]">
+                  {totalOrders} total
+                </span>
+              </div>
 
               {/* SEARCH */}
-              <div className="relative mb-5">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)] pointer-events-none" />
+              <div className="relative mb-6">
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search orders..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl
+                             border border-[var(--border)]
+                             bg-[var(--background)]
+                             focus:ring-2 focus:ring-[var(--accent)]
+                             outline-none"
                 />
               </div>
 
               {orders.length === 0 ? (
-                <p className="text-[var(--muted)]">No orders found.</p>
+                <div className="text-center py-12">
+                  <p className="text-lg font-medium mb-2">
+                    No orders yet 🚀
+                  </p>
+                  <p className="text-sm text-[var(--muted)] mb-5">
+                    Start your first top-up and get instant diamonds
+                  </p>
+
+                  <button
+                    onClick={() => (window.location.href = "/games/mlbb")}
+                    className="px-6 py-3 rounded-xl bg-[var(--accent)]
+                               text-white font-semibold shadow-md
+                               hover:scale-105 transition"
+                  >
+                    Top-Up Now
+                  </button>
+                </div>
               ) : (
                 <>
                   <div className="space-y-5">
@@ -153,16 +224,15 @@ export default function Dashboard() {
                     ))}
                   </div>
 
-                  {/* PAGINATION (MOBILE SAFE) */}
-                  <div className="mt-6 flex justify-between items-center relative z-20 pointer-events-auto">
+                  {/* PAGINATION */}
+                  <div className="mt-6 flex justify-center items-center gap-4">
                     <button
                       disabled={page === 1}
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      className="w-11 h-11 flex items-center justify-center rounded-lg border 
-                                 disabled:opacity-40 disabled:cursor-not-allowed
-                                 touch-manipulation"
+                      className="px-4 py-2 rounded-lg border
+                                 disabled:opacity-40"
                     >
-                      <FiChevronLeft size={22} />
+                      Prev
                     </button>
 
                     <span className="text-sm text-[var(--muted)]">
@@ -172,11 +242,10 @@ export default function Dashboard() {
                     <button
                       disabled={orders.length < limit}
                       onClick={() => setPage((p) => p + 1)}
-                      className="w-11 h-11 flex items-center justify-center rounded-lg border 
-                                 disabled:opacity-40 disabled:cursor-not-allowed
-                                 touch-manipulation"
+                      className="px-4 py-2 rounded-lg border
+                                 disabled:opacity-40"
                     >
-                      <FiChevronRight size={22} />
+                      Next
                     </button>
                   </div>
                 </>
@@ -184,7 +253,7 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* WALLET */}
+          {/* ================= WALLET ================= */}
           {activeTab === "wallet" && (
             <WalletTab
               walletBalance={walletBalance}
@@ -192,12 +261,12 @@ export default function Dashboard() {
             />
           )}
 
-          {/* ACCOUNT */}
+          {/* ================= ACCOUNT ================= */}
           {activeTab === "account" && (
             <AccountTab userDetails={userDetails} />
           )}
 
-          {/* QUERY */}
+          {/* ================= QUERY ================= */}
           {activeTab === "query" && <QueryTab />}
         </div>
       </section>
