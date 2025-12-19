@@ -45,13 +45,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white">
-          {/* <div className="snow" />
+          <div className="snow" />
   <span className="big-snow"></span>
   <span className="big-snow"></span>
-  <span className="big-snow"></span> */}
+  <span className="big-snow"></span> 
 
         <Header />
-                {/* <ChristmasPopup /> */}
+                <ChristmasPopup /> 
 
         <main className="pt-20">{children}</main>
         <Footer/>
