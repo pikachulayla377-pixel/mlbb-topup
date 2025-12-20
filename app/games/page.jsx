@@ -24,7 +24,7 @@ export default function GamesPage() {
   const SPECIAL_MLBB_GAME = "MLBB SMALL";
 
   const outOfStockGames = [
-    "PUBG Mobile",
+    // "PUBG Mobile",
     "Genshin Impact",
     "Honor Of Kings",
     "TEST 1",
@@ -33,14 +33,40 @@ export default function GamesPage() {
   const isOutOfStock = (name) => outOfStockGames.includes(name);
 
   /* ================= FETCH ================= */
-  useEffect(() => {
-    fetch("/api/games")
-      .then((res) => res.json())
-      .then((data) => {
-        setCategory(data?.data?.category || []);
-        setGames(data?.data?.games || []);
-      });
-  }, []);
+useEffect(() => {
+  fetch("/api/games")
+    .then((res) => res.json())
+    .then((data) => {
+      const fetchedCategories = data?.data?.category || [];
+      let fetchedGames = data?.data?.games || [];
+
+      // 🔵 FIND PUBG MOBILE
+      const pubgGame = fetchedGames.find(
+        (g) => g.gameName === "PUBG Mobile"
+      );
+
+      // 🔵 CLONE AS BGMI
+      if (pubgGame) {
+        const bgmiGame = {
+          ...pubgGame,
+          gameName: "BGMI",
+        };
+
+        // Prevent duplicates on re-render
+        const alreadyExists = fetchedGames.some(
+          (g) => g.gameSlug === "bgmi"
+        );
+
+        if (!alreadyExists) {
+          fetchedGames = [...fetchedGames, bgmiGame];
+        }
+      }
+
+      setCategory(fetchedCategories);
+      setGames(fetchedGames);
+    });
+}, []);
+
 
   /* ================= ACTIVE FILTER COUNT ================= */
   const activeFilterCount =
