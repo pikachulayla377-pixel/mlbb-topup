@@ -1,78 +1,96 @@
-import Link from "next/link";
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import ids from "../../data/idsOnSell.json";
+import IdCard from "@/components/IdsOnSell/IdCard";
+import { FiFilter, FiX } from "react-icons/fi";
+import IdsFilterModal from "@/components/IdsOnSell/IdsFilterModal";
 
 export default function IdsOnSellPage() {
+  const [search, setSearch] = useState("");
+  const [showFilter, setShowFilter] = useState(false);
+
+  // filters (basic for now)
+  const [rentOnly, setRentOnly] = useState(false);
+  const [globalOnly, setGlobalOnly] = useState(false);
+
+  /* ================= FILTER LOGIC ================= */
+  const filteredIds = ids.filter((item: any) => {
+    const matchSearch =
+      item.title.toLowerCase().includes(search.toLowerCase());
+
+    const matchRent =
+      !rentOnly || item.rent?.available === true;
+
+    const matchGlobal =
+      !globalOnly || item.heroTitles?.global?.length > 0;
+
+    return matchSearch && matchRent && matchGlobal;
+  });
+
   return (
-    <main className="min-h-screen p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">MLBB IDs On Sell</h1>
+    <main className="min-h-screen p-6 max-w-7xl mx-auto space-y-6">
+      {/* ================= HEADER ================= */}
+      <div className="flex items-center gap-3">
+        {/* SEARCH */}
+        <div className="relative flex-1 min-w-0">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search MLBB IDs..."
+            className="w-full rounded-xl border bg-[var(--card)]
+              px-4 py-2 text-sm outline-none
+              focus:border-[var(--accent)]
+              placeholder:text-[var(--muted)]"
+          />
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {ids.map((item) => {
-          const totalHeroes = item.heroes?.total ?? item.heroes;
-          const totalSkins = item.skins?.total ?? item.skins;
-          const diamonds = item.diamonds?.doubleDiamondAvailable || [];
-          const coa = item.currencies?.coa  ?? 0;
-          const hasGlobal = item.heroTitles?.global?.length > 0;
-
-          return (
-            <Link
-              key={item.id}
-              href={`/idsonsell/${item.slug}`}
-              className="border rounded-xl overflow-hidden hover:shadow-lg transition bg-white"
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2
+                text-[var(--muted)] hover:text-red-500"
             >
-              {/* IMAGE */}
-              <div className="relative h-40 w-full">
-                <Image
-                  src={item.media?.images?.[0] || "/logo.png"}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <FiX />
+            </button>
+          )}
+        </div>
 
-              {/* CONTENT */}
-              <div className="p-4 space-y-2 text-sm">
-                {/* TITLE */}
-                <h2 className="font-semibold text-base leading-snug">
-                  {item.title}
-                </h2>
-
-                {/* HERO / SKIN */}
-                <div className="flex justify-between text-gray-700">
-                  <span>🎭 Heroes: <b>{totalHeroes}+</b></span>
-                  <span>🎨 Skins: <b>{totalSkins}+</b></span>
-                </div>
-
-                {/* PRICE */}
-                <div className="text-lg font-bold text-black">
-                  ₹{item.price}
-                </div>
-
-                {/* COA & DIAMONDS */}
-                <div className="text-xs text-gray-600 space-y-1">
-                  <div>💎 COA: <b>{coa}+</b></div>
-                  <div>
-                    💠 Double Diamonds:{" "}
-                    <b>
-                      {diamonds.length > 0
-                        ? diamonds.join(", ")
-                        : "Not Available"}
-                    </b>
-                  </div>
-                </div>
-
-                {/* GLOBAL TAG */}
-                {hasGlobal && (
-                  <div className="inline-block mt-2 px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
-                    🌍 Global Hero Available
-                  </div>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+        {/* FILTER BUTTON */}
+        <button
+          onClick={() => setShowFilter(true)}
+          className="shrink-0 flex items-center gap-2
+            px-4 py-2 rounded-xl border bg-[var(--card)]
+            hover:border-[var(--accent)]"
+        >
+          <FiFilter />
+          <span className="hidden sm:inline">Filter</span>
+        </button>
       </div>
+
+      {/* ================= GRID ================= */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredIds.length > 0 ? (
+          filteredIds.map((item: any) => (
+            <IdCard key={item.id} item={item} />
+          ))
+        ) : (
+          <p className="text-sm text-[var(--muted)]">
+            No IDs found
+          </p>
+        )}
+      </div>
+
+      {/* ================= FILTER MODAL ================= */}
+      {showFilter && (
+        <IdsFilterModal
+          open={showFilter}
+          onClose={() => setShowFilter(false)}
+          rentOnly={rentOnly}
+          setRentOnly={setRentOnly}
+          globalOnly={globalOnly}
+          setGlobalOnly={setGlobalOnly}
+        />
+      )}
     </main>
   );
 }

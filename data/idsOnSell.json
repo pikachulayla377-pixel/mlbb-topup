@@ -1,12 +1,21 @@
 [
   {
     "id": "MLBB-1001",
-    "slug": "mlbb-mythic-collector-1001",
+    "slug": "mlbb-mega-collector-1001",
 
-    "title": "Premium MLBB Account – Collector Skins",
-    "price": 15999,
+    "title": "Premium MLBB Account – Mega Collector Skins",
+    "price": 10999,
     "currency": "INR",
-
+  "rent": {
+    "available": true,
+    "durationHours": 24,
+    "price": 99,
+    "conditions": [
+      "No email / Moonton rebind",
+      "Login only, no changes allowed",
+      "Auto logout after 24 hours"
+    ]
+  },
     "rank": {
       "current": "Mythic Glory",
       "highest": "Mythic Glory",
@@ -21,22 +30,51 @@
     },
 
     "heroes": {
-      "total": 250
+      "total": 130
     },
 
-    "skins": {
-      "total": 380,
-      "legend": 3,
-      "grand": 6,
-      "epic": 42,
-      "collector": [
-        "Ling Collector",
-        "Valentina Collector"
-      ]
-    },
+   "skins": {
+  "total": 498,
+  "legend": 3,
+  "legendList": [
+    "Alucard – Obsidian Blade",
+    "Granger – Doomsday Terminator",
+    "lunox – Celestial Empress"
+  ],
+  "grand": 6,
+  "grandList": [
+    "Gusion – Cyber Ops",
+    "Eudora – Thunder God",
+    "Lesley – Deadly Beauty",
+    "Zilong – Dragon Knight",
+    "Natalia – Shadow Ops",
+    "Johnson – Speeding Bullet"
+  ],
+  "exquisite": 12,
+  "exquisiteList": [
+    "Aldous – Mecha Storm",
+    "Bruno – All-Star",
+    "Chou – Dragon Fist",
+    "Cyclops – Astro Wizard",
+    "Fanny – Cybernetic"
+  
+  ],
+  "epic": 42,
+  "collector": [
+    "Ling Collector",
+    "Valentina Collector"
+  ],
+  "rare": [
+    "Fanny – Skylark",
+    "Chou – Go Ballistic",
+    "Kagura – Rainy Walk",
+    "Hayabusa – Shura"
+  ]
+}
+,
 
     "diamonds": {
-      "balance": 0,
+      "balance": 10,
       "doubleDiamondAvailable": [50, 150, 250, 500]
     },
 
@@ -61,11 +99,11 @@
       "global": [
         {
           "hero": "Ling",
-          "rank": "Global 82"
+          "rank": "India 82"
         },
         {
           "hero": "Hayabusa",
-          "rank": "Global 211"
+          "rank": "India 211"
         }
       ],
       "supreme": [
@@ -79,7 +117,7 @@
     },
 
     "dealer": {
-      "owner": "Yeageren",
+      "owner": "TK",
       "contact": {
         "whatsapp": "https://wa.me/919999999999",
         "telegram": null,
@@ -104,7 +142,7 @@
       "2 Collector Skins",
       "Epic Recall",
       "Renowned Collector V",
-      "Global Ranked Heroes"
+      "Supream Ranked Heroes"
     ],
 
     "others": [
