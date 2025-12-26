@@ -103,7 +103,7 @@ data.data.itemId = data.data.itemId
 
     return {
       ...item,
-      sellingPrice: Number(finalPrice.toFixed(2)),
+      sellingPrice: Math.ceil(finalPrice),
 
     };
   });
