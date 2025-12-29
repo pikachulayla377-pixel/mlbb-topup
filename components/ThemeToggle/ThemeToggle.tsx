@@ -7,53 +7,53 @@ const themes = [
   { id: "dark", icon: "🌙", label: "Dark" },
 
   // 🌸 Soft / Aesthetic
-  // { id: "sakura", icon: "🌸", label: "Sakura" },
-  // { id: "ocean", icon: "🌊", label: "Ocean" },
-  // { id: "forest", icon: "🍃", label: "Forest" },
-  // { id: "tropical", icon: "🌺", label: "Tropical" },
-  // { id: "ice", icon: "❄️", label: "Ice" },
+  { id: "sakura", icon: "🌸", label: "Sakura" },
+  { id: "ocean", icon: "🌊", label: "Ocean" },
+  { id: "forest", icon: "🍃", label: "Forest" },
+  { id: "tropical", icon: "🌺", label: "Tropical" },
+  { id: "ice", icon: "❄️", label: "Ice" },
 
     // 🧔 Manly / Strong
-  // { id: "steel", icon: "🔩", label: "Steel Gray" },
-  // { id: "gunmetal", icon: "🛠️", label: "Gunmetal" },
-  // { id: "midnightblack", icon: "🖤", label: "Midnight Black" },
-  // { id: "royalblue", icon: "👑", label: "Royal Blue" },
-  // { id: "bloodiron", icon: "🩸", label: "Blood Iron" },
-  // { id: "warzone", icon: "⚔️", label: "War Zone" },
-  // { id: "carbon", icon: "🏴", label: "Carbon Fiber" },
+  { id: "steel", icon: "🔩", label: "Steel Gray" },
+  { id: "gunmetal", icon: "🛠️", label: "Gunmetal" },
+  { id: "midnightblack", icon: "🖤", label: "Midnight Black" },
+  { id: "royalblue", icon: "👑", label: "Royal Blue" },
+  { id: "bloodiron", icon: "🩸", label: "Blood Iron" },
+  { id: "warzone", icon: "⚔️", label: "War Zone" },
+  { id: "carbon", icon: "🏴", label: "Carbon Fiber" },
 
     // 💖 Girly / Cute
-  // { id: "rose", icon: "🌹", label: "Rose Blush" },
-  // { id: "lavender", icon: "💜", label: "Lavender Dream" },
-  // { id: "peach", icon: "🍑", label: "Peach Glow" },
-  // { id: "cotton", icon: "🍬", label: "Cotton Candy" },
-  // { id: "bubblegum", icon: "🎀", label: "Bubblegum Pop" },
-  // { id: "cherry", icon: "🍒", label: "Cherry Kiss" },
-  // { id: "vanilla", icon: "🍦", label: "Vanilla Cream" },
+  { id: "rose", icon: "🌹", label: "Rose Blush" },
+  { id: "lavender", icon: "💜", label: "Lavender Dream" },
+  { id: "peach", icon: "🍑", label: "Peach Glow" },
+  { id: "cotton", icon: "🍬", label: "Cotton Candy" },
+  { id: "bubblegum", icon: "🎀", label: "Bubblegum Pop" },
+  { id: "cherry", icon: "🍒", label: "Cherry Kiss" },
+  { id: "vanilla", icon: "🍦", label: "Vanilla Cream" },
 
   // 💜 Fantasy / Anime
-  // { id: "violet", icon: "💜", label: "Violet" },
-  // { id: "midnight", icon: "🌪️", label: "Midnight" },
-  // { id: "galaxy", icon: "🌌", label: "Galaxy" },
-  // { id: "plasma", icon: "🧬", label: "Plasma" },
-  // { id: "crimson", icon: "🩸", label: "Crimson" },
+  { id: "violet", icon: "💜", label: "Violet" },
+  { id: "midnight", icon: "🌪️", label: "Midnight" },
+  { id: "galaxy", icon: "🌌", label: "Galaxy" },
+  { id: "plasma", icon: "🧬", label: "Plasma" },
+  { id: "crimson", icon: "🩸", label: "Crimson" },
 
   // 🔥 Energy / Action
-  // { id: "ember", icon: "🔥", label: "Ember" },
-  // { id: "sunset", icon: "🌅", label: "Sunset" },
-  // { id: "solar", icon: "🟡", label: "Solar Gold" },
+  { id: "ember", icon: "🔥", label: "Ember" },
+  { id: "sunset", icon: "🌅", label: "Sunset" },
+  { id: "solar", icon: "🟡", label: "Solar Gold" },
 
   // 👾 Tech / Retro
-  // { id: "cyber", icon: "💠", label: "Cyber" },
-  // { id: "neon-night", icon: "🟣", label: "Neon Night" },
-  // { id: "retro", icon: "👾", label: "Retro" },
-  // { id: "arctic", icon: "🧊", label: "Arctic" },
+  { id: "cyber", icon: "💠", label: "Cyber" },
+  { id: "neon-night", icon: "🟣", label: "Neon Night" },
+  { id: "retro", icon: "👾", label: "Retro" },
+  { id: "arctic", icon: "🧊", label: "Arctic" },
 
   // 🎭 Minimal / Premium
-  // { id: "monochrome", icon: "🎭", label: "Monochrome" },
-  // { id: "aurora", icon: "🔵", label: "Aurora" },
-  // { id: "coffee", icon: "☕", label: "Coffee" },
-  // { id: "obsidian", icon: "🖤", label: "Obsidian" },
+  { id: "monochrome", icon: "🎭", label: "Monochrome" },
+  { id: "aurora", icon: "🔵", label: "Aurora" },
+  { id: "coffee", icon: "☕", label: "Coffee" },
+  { id: "obsidian", icon: "🖤", label: "Obsidian" },
 ];
 
 
