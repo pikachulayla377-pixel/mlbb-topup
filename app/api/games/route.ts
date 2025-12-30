@@ -34,6 +34,28 @@ const OTTS = [
     available: true,
   },
 ];
+/* ================= MEMBERSHIP SECTION ================= */
+const MEMBERSHIPS = [
+  {
+    name: "Silver Membership",
+    slug: "silver-membership",
+    image:
+      "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/rs_klee62.png",
+    type: "silver",
+    category: "Membership",
+    available: true,
+  },
+  {
+    name: "Reseller Membership",
+    slug: "reseller-membership",
+    image:
+      "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/sew_zcz775.png",
+    type: "reseller",
+    category: "Membership",
+    available: true,
+  },
+];
+
 
 /* ================= API ================= */
 export async function GET() {
@@ -157,6 +179,13 @@ export async function GET() {
           items: OTTS.filter((o) => o.available),
           total: OTTS.filter((o) => o.available).length,
         },
+        // 🔥 MEMBERSHIP SECTION
+memberships: {
+  title: "Memberships & Passes",
+  items: MEMBERSHIPS.filter((m) => m.available),
+  total: MEMBERSHIPS.filter((m) => m.available).length,
+},
+
       },
     });
   } catch (error) {

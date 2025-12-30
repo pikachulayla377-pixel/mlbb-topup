@@ -4,6 +4,87 @@ import { connectDB } from "@/lib/mongodb";
 import PricingConfig from "@/models/PricingConfig";
 
 /* ================= OTT CONFIG ================= */
+/* ================= MEMBERSHIP CONFIG ================= */
+const MEMBERSHIPS = {
+  "silver-membership": {
+    gameName: "Silver Membership",
+    gameFrom: "Your Platform",
+    gameImageId: {
+      image:
+        "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/rs_klee62.png",
+    },
+    gameDescription: "Unlock premium pricing and basic benefits.",
+    inputFieldOne: "User Email / Phone",
+    inputFieldTwoOption: [],
+    isValidationRequired: false,
+    gameAvailablity: true,
+    itemId: [
+      {
+        itemName: "3 Month",
+        itemSlug: "silver-1m",
+        sellingPrice: 99,
+        dummyPrice: 299,
+        itemAvailablity: true,
+        index: 1,
+          itemImageId: {
+                    image: "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/rs_klee62.png"
+                },
+      },
+    
+      {
+        itemName: " 1 year",
+        itemSlug: "silver-3m",
+        sellingPrice: 299,
+        dummyPrice: 1099,
+        itemAvailablity: true,
+        index: 3,
+          itemImageId: {
+                    image: "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/rs_klee62.png"
+                },
+      },
+    ],
+  },
+
+  "reseller-membership": {
+    gameName: "Reseller Membership",
+    gameFrom: "Your Platform",
+    gameImageId: {
+      image:
+        "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/sew_zcz775.png",
+    },
+    gameDescription: "Get reseller pricing, bulk access & dashboard.",
+    inputFieldOne: "User Email / Phone",
+    inputFieldTwoOption: [],
+    isValidationRequired: false,
+    gameAvailablity: true,
+    itemId: [
+      {
+        itemName: "3 Month",
+        itemSlug: "reseller-1m",
+        sellingPrice: 199,
+        dummyPrice: 499,
+        itemAvailablity: true,
+        index: 1,
+          itemImageId: {
+                    image: "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/sew_zcz775.png"
+                },
+      },
+  
+      {
+        itemName: "1 Year",
+        itemSlug: "reseller-3m",
+        sellingPrice: 699,
+        dummyPrice: 2099,
+        itemAvailablity: true,
+        index: 3,
+          itemImageId: {
+                    image: "https://res.cloudinary.com/dk0sslz1q/image/upload/v1767096434/sew_zcz775.png"
+                },
+      },
+    ],
+  },
+};
+
 const OTTS = {
   "youtube-premium": {
     gameName: "YouTube Premium",
@@ -138,6 +219,19 @@ export async function GET(req, { params }) {
         },
       });
     }
+    if (MEMBERSHIPS[slug]) {
+  return NextResponse.json({
+    statusCode: 200,
+    success: true,
+    message: "MEMBERSHIP",
+    data: {
+      gameSlug: slug,
+      gameLink: "",
+      ...MEMBERSHIPS[slug],
+    },
+  });
+}
+
 
     /* ================= OPTIONAL JWT ================= */
     let userType = "user";

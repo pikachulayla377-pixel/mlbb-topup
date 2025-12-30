@@ -31,10 +31,11 @@ const HEADER_CONFIG = {
       { label: "Account Settings", href: "/dashboard" },
       { label: "My Wallet", href: "/dashboard" },
       { label: "My Orders", href: "/dashboard" },
+      { label: "Membership", href: "/admin-panal" }
     ],
     roles: {
       owner: { label: "Admin Panel", href: "/owner-panal" },
-      admin: { label: "Reseller Panel", href: "/admin-panal" },
+      // admin: { label: "Reseller Panel", href: "/admin-panal" },
     },
   },
 };

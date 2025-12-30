@@ -15,6 +15,8 @@ export default function GamesPage() {
   const [games, setGames] = useState([]);
   const [otts, setOtts] = useState(null);
 
+  const [memberships, setMemberships] = useState(null);
+
 
   /* ================= FILTER STATE ================= */
   const [showFilter, setShowFilter] = useState(false);
@@ -45,6 +47,8 @@ useEffect(() => {
       const fetchedCategories = data?.data?.category || [];
       let fetchedGames = data?.data?.games || [];
       const fetchedOtts = data?.data?.otts || null;
+            const fetchedMemberships = data?.data?.memberships || null;
+
 
       // 🔵 FIND PUBG MOBILE
       const pubgGame = fetchedGames.find(
@@ -71,6 +75,8 @@ useEffect(() => {
       setCategory(fetchedCategories);
       setGames(fetchedGames);
       setOtts(fetchedOtts);
+            setMemberships(fetchedMemberships);
+
     });
 }, []);
 
@@ -302,6 +308,53 @@ useEffect(() => {
     </div>
   </div>
 )}
+
+{/* ================= MEMBERSHIP SECTION ================= */}
+{memberships?.items?.length > 0 && (
+  <div className="max-w-7xl mx-auto mb-14">
+    <div className="flex items-center gap-3 mb-6">
+      <h2 className="text-2xl font-bold text-[var(--foreground)]">
+        {memberships.title}
+      </h2>
+      <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
+      <span className="text-sm text-[var(--muted)]">
+        {memberships.total} plans
+      </span>
+    </div>
+
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      {memberships.items.map((plan) => (
+        <Link
+          key={plan.slug}
+          href={`/games/membership/${plan.slug}`}
+          className="group rounded-2xl bg-[var(--card)]
+                     border border-[var(--border)]
+                     hover:border-[var(--accent)]
+                     transition-all duration-300
+                     p-5 flex flex-col items-center text-center"
+        >
+          <div className="relative w-20 h-20 mb-4">
+            <Image
+              src={plan.image}
+              alt={plan.name}
+              fill
+              className="object-contain"
+            />
+          </div>
+
+          <h3 className="font-semibold text-[var(--foreground)]">
+            {plan.name}
+          </h3>
+
+          <span className="mt-1 text-xs text-[var(--muted)]">
+            {plan.duration}
+          </span>
+        </Link>
+      ))}
+    </div>
+  </div>
+)}
+
 
       {/* ================= FILTER MODAL ================= */}
       {showFilter && (
